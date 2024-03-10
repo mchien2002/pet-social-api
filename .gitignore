@@ -1,0 +1,6 @@
+/uploads
+/src/uploads
+/src/.env
+/src/dev.env
+/src/pro.env
+/node_modules
