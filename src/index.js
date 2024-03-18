@@ -9,8 +9,8 @@ const path = require('path');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
-PORT = process.env.PORT || 3000
-BASE_URL = process.env.BASE_URL
+const PORT = process.env.PORT || 3000
+const BASE_URL = process.env.BASE_URL
 
 const userRt = require('./routers/user.router');
 const postCtr = require('./routers/post.router');
