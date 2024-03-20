@@ -8,7 +8,21 @@ const s3Service = require("../includes/aws.service")
 const FilePathConstant = require('../constants/file.pathaws')
 
 postCtr.getTrending = async function (req, res) {
-
+    try {
+        const postTrending = await Post.find().populate("owner")
+        return res.status(200).json({
+            status: true,
+            message: ResponseMessage.ACCTION_SUCCESSFULLY,
+            data: postTrending
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            status: false,
+            message: ResponseMessage.ACTION_FAILURE,
+            error: ResponseMessage.ACTION_FAILURE,
+        })
+    }
 }
 
 postCtr.postNewFeed = async function (req, res) {
@@ -33,6 +47,7 @@ postCtr.postNewFeed = async function (req, res) {
             data: newPosted
         })
     } catch (error) {
+        console.error(error)
         return res.status(500).json({
             status: false,
             message: ResponseMessage.ACTION_FAILURE,
