@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { Post } = require('../models/post.model')
+const { Like } = require('../models/like.model')
+const { Share } = require('../models/share.model')
+const { Comment } = require('../models/comment.model')
 const ResponseMessage = require('../constants/response.message')
 const postCtr = module.exports = {}
 const fileUtil = require('../utils/file.util')
@@ -9,12 +12,18 @@ const FilePathConstant = require('../constants/file.pathaws')
 
 postCtr.getTrending = async function (req, res) {
     try {
-        const postTrending = await Post.find().populate("owner")
+        const onwerId = req.query.owner_id;
+        let postTrending = await Post.find(onwerId ? { ownerId: onwerId } : {}).populate("owner");
+        await Promise.all(postTrending.map(async post => {
+            post._doc.likeCount = await Like.countDocuments({ post: post.id });
+            post._doc.shareCount = await Share.countDocuments({ post: post.id });
+            post._doc.comments = await Comment.find({ post: post.id }).populate("peopleComment")
+        }));
         return res.status(200).json({
             status: true,
             message: ResponseMessage.ACCTION_SUCCESSFULLY,
             data: postTrending
-        })
+        });
     } catch (error) {
         console.error(error)
         return res.status(500).json({

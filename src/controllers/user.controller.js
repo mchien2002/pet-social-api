@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const { User } = require('../models/user.model')
+const { Follower } = require('../models/follower.model')
+const { Post } = require('../models/post.model')
+const { Fan } = require('../models/fan.model')
 const ResponseMessage = require('../constants/response.message')
 const userCtr = module.exports = {}
 
@@ -64,7 +67,7 @@ userCtr.signupAccount = async function (req, res) {
 userCtr.loginAccount = async function (req, res) {
     try {
         const userInfoLogin = req.body
-        const userLogin = await User.findOne({username: userInfoLogin.username})
+        const userLogin = await User.findOne({ username: userInfoLogin.username })
         const validPassword = await bcrypt.compare(userInfoLogin.password, userLogin.password)
         if (!validPassword) {
             return res.status(401).json({
@@ -75,13 +78,16 @@ userCtr.loginAccount = async function (req, res) {
         } else {
             userLogin._doc.token = await generateAccessToken(userLogin, '45d')
             const { password, ...others } = userLogin._doc
+            others.followerCount = await Follower.countDocuments({ user: userLogin._id });
+            others.fanCount = await Fan.countDocuments({ user: userLogin._id });
+            others.postCount = await Post.countDocuments({ owner: userLogin._id });
             return res.status(200).json({
                 status: true,
                 message: ResponseMessage.ACCTION_SUCCESSFULLY,
                 data: others
             })
         }
-        
+
     } catch (error) {
         console.error(error)
         res.status(500).json({
