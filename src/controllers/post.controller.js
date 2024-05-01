@@ -14,6 +14,7 @@ postCtr.getTrending = async function (req, res) {
     try {
         const onwerId = req.query.owner_id;
         let postTrending = await Post.find(onwerId ? { ownerId: onwerId } : {}).populate("owner");
+        postTrending.sort((a, b) => b.createdAt - a.createdAt);
         await Promise.all(postTrending.map(async post => {
             post._doc.likeCount = await Like.countDocuments({ post: post.id });
             post._doc.shareCount = await Share.countDocuments({ post: post.id });
@@ -64,15 +65,41 @@ postCtr.postNewFeed = async function (req, res) {
         })
     }
 }
+postCtr.likePost = async function (req, res) {
+    try {
+        const newLike = req.body
+        const liked = await Like.findOne({ peopleLike: newLike.userId, post: postId })
+        if (liked) {
+            return res.status(201).json({
+                status: true,
+                message: ResponseMessage.ACCTION_SUCCESSFULLY,
+            })
+        } else {
+            const newLikeData = await Like.create(newLike)
+            const postUpdate = await Post.findById(newLike.postId)
+            return res.status(201).json({
+                status: true,
+                message: ResponseMessage.ACCTION_SUCCESSFULLY,
+                data: postUpdate
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            status: false,
+            message: ResponseMessage.ACTION_FAILURE,
+            error: ResponseMessage.ACTION_FAILURE,
+        })
+    }
+}
+
 postCtr.removeNewFeed = async function (req, res) {
 
 }
 postCtr.editNewFeed = async function (req, res) {
 
 }
-postCtr.likeNewFeed = async function (req, res) {
 
-}
 postCtr.commentNewFeed = async function (req, res) {
 
 }
