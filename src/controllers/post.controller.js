@@ -76,7 +76,7 @@ postCtr.likePost = async function (req, res) {
             })
         } else {
             const newLikeData = await Like.create(newLike)
-            const postUpdate = await Post.findById(newLike.postId)
+            const postUpdate = await Post.findById(newLike.postId).populate("owner")
             return res.status(201).json({
                 status: true,
                 message: ResponseMessage.ACCTION_SUCCESSFULLY,
