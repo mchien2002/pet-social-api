@@ -68,7 +68,7 @@ postCtr.postNewFeed = async function (req, res) {
 postCtr.likePost = async function (req, res) {
     try {
         const newLike = req.body
-        const liked = await Like.findOne({ peopleLike: newLike.userId, post: postId })
+        const liked = await Like.findOne({ peopleLike: newLike.userId, post: newLike.postId })
         if (liked) {
             return res.status(201).json({
                 status: true,
