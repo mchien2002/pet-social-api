@@ -81,6 +81,9 @@ postCtr.likePost = async function (req, res) {
             }
             const newLikeData = await Like.create(newLikeDataJson)
             const postUpdate = await Post.findById(newLike.postId).populate("owner")
+            postUpdate._doc.likeCount = await Like.countDocuments({ post: postUpdate._id });
+            postUpdate._doc.shareCount = await Share.countDocuments({ post: postUpdate._id });
+            postUpdate._doc.comments = await Comment.find({ post: postUpdate._id }).populate("peopleComment")
             return res.status(201).json({
                 status: true,
                 message: ResponseMessage.ACCTION_SUCCESSFULLY,
