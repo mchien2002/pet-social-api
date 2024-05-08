@@ -13,11 +13,15 @@ const FilePathConstant = require('../constants/file.pathaws')
 commentCtr.newComment = async function (req, res) {
     try {
         const newComment = req.body
-        const newCommentData = (await (await Comment.create(newComment)).populate("peopleComment")).populate("post")
+        const newCommentData = await Comment.create(newComment);
+        const populatedComment = await Comment.findById(newCommentData._id)
+            .populate("peopleComment")
+            .populate("post")
+            .exec();
         return res.status(201).json({
             status: true,
             message: ResponseMessage.ACCTION_SUCCESSFULLY,
-            data: newCommentData
+            data: populatedComment
         })
     } catch (error) {
         console.error(error)
