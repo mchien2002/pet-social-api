@@ -78,8 +78,12 @@ userCtr.loginAccount = async function (req, res) {
         } else {
             userLogin._doc.token = await generateAccessToken(userLogin, '45d')
             const { password, ...others } = userLogin._doc
-            others.followerCount = await Follower.countDocuments({ user: userLogin._id });
-            others.fanCount = await Fan.countDocuments({ user: userLogin._id });
+            const followers = await Follower.find({ user: userLogin._id }).populate('follower', '_id');
+            const fans = await Follower.find({ follower: userLogin._id }).populate('user', '_id');
+            const followerIds = followers.map(follower => follower.follower._id.toString());
+            const fanIds = fans.map(fan => fan.follower._id.toString());
+            others.followers = followerIds
+            others.fans = fanIds
             others.postCount = await Post.countDocuments({ owner: userLogin._id });
             return res.status(200).json({
                 status: true,
