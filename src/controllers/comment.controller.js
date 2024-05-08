@@ -16,7 +16,6 @@ commentCtr.newComment = async function (req, res) {
         const newCommentData = await Comment.create(newComment);
         const populatedComment = await Comment.findById(newCommentData._id)
             .populate("peopleComment")
-            .populate("post")
             .exec();
         return res.status(201).json({
             status: true,
