@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 3000
 const BASE_URL = process.env.BASE_URL
 
 const userRt = require('./routers/user.router');
-const postCtr = require('./routers/post.router');
+const postRt = require('./routers/post.router');
+const followRt = require('./routers/follow.router');
 
 
 const app = express();
@@ -28,7 +29,8 @@ app.get(BASE_URL, async (req, res) => {
 })
 
 app.use(BASE_URL, userRt)
-app.use(BASE_URL, postCtr)
+app.use(BASE_URL, postRt)
+app.use(BASE_URL, followRt)
 
 app.listen(PORT, () => {
     databaseCon()
