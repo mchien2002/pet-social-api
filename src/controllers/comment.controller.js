@@ -13,7 +13,7 @@ const FilePathConstant = require('../constants/file.pathaws')
 commentCtr.newComment = async function (req, res) {
     try {
         const newComment = req.body
-        const newCommentData = await Comment.create(newComment)
+        const newCommentData = (await (await Comment.create(newComment)).populate("peopleComment")).populate("post")
         return res.status(201).json({
             status: true,
             message: ResponseMessage.ACCTION_SUCCESSFULLY,
