@@ -15,6 +15,7 @@ const BASE_URL = process.env.BASE_URL
 const userRt = require('./routers/user.router');
 const postRt = require('./routers/post.router');
 const followRt = require('./routers/follow.router');
+const commentRt = require('./routers/comment.router');
 
 
 const app = express();
@@ -31,6 +32,7 @@ app.get(BASE_URL, async (req, res) => {
 app.use(BASE_URL, userRt)
 app.use(BASE_URL, postRt)
 app.use(BASE_URL, followRt)
+app.use(BASE_URL, commentRt)
 
 app.listen(PORT, () => {
     databaseCon()
